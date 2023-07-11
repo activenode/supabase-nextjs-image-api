@@ -64,7 +64,7 @@ export async function YourRoute(
   const client = createServerSupabaseClient({ req, res });
 
   const imageData: SupabaseImageData = {
-    path: "your-path-to-the-image.png",
+    path: "your-path-to-the-image.png", // e.g. load from req.query parameter
     bucket: "your-bucket-name",
   };
 
