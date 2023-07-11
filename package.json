@@ -1,0 +1,30 @@
+{
+  "name": "supabase-nextjs-image-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "build-cjs": "tsc --project tsconfig.commonjs.json",
+    "postbuild": "npx uglify-js dist/esm/index.js -m -c -o dist/esm/index.min.mjs",
+    "postbuild-cjs": "npx uglify-js dist/cjs/index.js -m -c -o dist/cjs/index.min.cjs",
+    "prepublish": "npm run build && npm run build-cjs"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/index.min.cjs",
+      "import": "./dist/esm/index.min.mjs"
+    }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "@supabase/supabase-js": "^2.26.0",
+    "sharp": "^0.32.1",
+    "next": ">12.0.0"
+  },
+  "devDependencies": {
+    "uglify-js": "^3.17.4"
+  }
+}
