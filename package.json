@@ -2,7 +2,7 @@
   "name": "supabase-nextjs-image-api",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "dist/esm/index.mjs",
   "scripts": {
     "build": "tsc",
     "build-cjs": "tsc --project tsconfig.commonjs.json",
