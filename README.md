@@ -29,7 +29,7 @@ This is usually pretty fast and solid.
 
 ## Can't I just use the Image Transforms from Supabase itself?
 
-Sure, you can. Be aware of the limits and the costs though.
+Sure, you can. Be aware of the limits and the costs though. Also there is no such thing as an Image Deep Link with those which makes it really inconvenient.
 
 ## With which version of NextJS is this compatible?
 
