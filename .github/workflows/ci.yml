@@ -12,9 +12,10 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 20
+          registry-url: "https://registry.npmjs.org"
 
       - name: Install Deps
         run: npm ci
@@ -29,7 +30,7 @@ jobs:
           tag_message: "v%s"
           create_tag: "true"
           commit_pattern: "^Release (\\S+)"
-          publish_command: "npm publish"
+          publish_command: "npm"
           # publish_args: "--non-interactive"
         env: # More info about the environment variables in the README
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Leave this as is, it's automatically generated
