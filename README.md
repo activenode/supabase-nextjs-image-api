@@ -73,6 +73,7 @@ export async function YourRoute(
     //   maxSizeBytes: number; // for Vercel deploys this should be below 4mb
     //   maxSizeWidth: number;
     //   quality: number;
+    //   sharpen?: boolean;
     //   progressive?: boolean;
     //   standardCacheTime?: number;
   };

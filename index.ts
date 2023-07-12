@@ -68,6 +68,7 @@ export type ImageLoaderOptions = {
   quality: number;
   progressive?: boolean;
   standardCacheTime?: number;
+  sharpen?: boolean;
 };
 
 const oneKbInBytes = 1024;
@@ -140,6 +141,12 @@ async function getStreamableImage(
     );
 
     streamable = streamable.resize(Math.round(imageMeta.width * factor));
+  }
+
+  if (options.sharpen) {
+    streamable = streamable.sharpen({
+      sigma: 2,
+    });
   }
 
   streamable = streamable.jpeg({
