@@ -145,7 +145,7 @@ async function getStreamableImage(
 
   if (options.sharpen) {
     streamable = streamable.sharpen({
-      sigma: 2,
+      sigma: 1.1,
     });
   }
 
