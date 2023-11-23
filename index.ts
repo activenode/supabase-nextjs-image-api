@@ -2,11 +2,8 @@ import { SupabaseClient } from "@supabase/supabase-js";
 import { NextApiResponse } from "next";
 import sharp from "sharp";
 
-export const TRANSPARENT_IMAGE_URL =
-  "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-
 export const TRANSPARENT_IMAGE_GIF_BYTES = Buffer.from(
-  TRANSPARENT_IMAGE_URL,
+  "R0lGODlhAQABAIAAAAAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=",
   "base64"
 );
 
@@ -168,6 +165,10 @@ export async function loadImageSafely(
   const { onError, useTransparentImageFallback } = options;
 
   try {
+    if (!imageData.bucket || !imageData.path) {
+      throw new Error("Invalid image data");
+    }
+
     const streamable = await getStreamableImage(
       supabaseClient,
       imageData,
