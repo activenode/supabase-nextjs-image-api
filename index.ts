@@ -206,7 +206,7 @@ export async function loadImageSafely(
         "Cache-control": "no-cache",
       });
 
-      apiRes.write(TRANSPARENT_IMAGE_GIF_BYTES);
+      apiRes.end(TRANSPARENT_IMAGE_GIF_BYTES, "binary");
     } else {
       apiRes.status(errCode).send(errMessage);
     }
