@@ -3,13 +3,12 @@ import { NextApiResponse } from "next";
 import sharp from "sharp";
 
 export const TRANSPARENT_IMAGE_URL =
-  "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+  "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 
-export const TRANSPARENT_IMAGE_GIF_BYTES = Buffer.from([
-  0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x01, 0x00, 0x01, 0x00, 0x80, 0x00, 0x00,
-  0xff, 0xff, 0xff, 0x00, 0x00, 0x00, 0x2c, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00,
-  0x01, 0x00, 0x00, 0x02, 0x02, 0x44, 0x01, 0x00, 0x3b,
-]);
+export const TRANSPARENT_IMAGE_GIF_BYTES = Buffer.from(
+  TRANSPARENT_IMAGE_URL,
+  "base64"
+);
 
 async function loadImageFromSupabase(
   serverClient: SupabaseClient,
