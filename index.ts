@@ -136,7 +136,7 @@ async function getStreamableImage(
       downscaleFactorBytesEstimated
     );
 
-    streamable = streamable.resize(Math.round(imageMeta.width * factor));
+    streamable = streamable.rotate().resize(Math.round(imageMeta.width * factor));
   }
 
   if (options.sharpen) {
