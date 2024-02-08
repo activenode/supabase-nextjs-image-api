@@ -1,20 +1,14 @@
-import { SupabaseClient } from "@supabase/supabase-js";
-import { NextApiResponse } from "next";
-import sharp from "sharp";
+import { SupabaseClient } from '@supabase/supabase-js';
+import { NextApiResponse } from 'next';
+import sharp from 'sharp';
 
 export const TRANSPARENT_IMAGE_GIF_BYTES = Buffer.from(
-  "R0lGODlhAQABAIAAAAAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=",
-  "base64"
+  'R0lGODlhAQABAIAAAAAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=',
+  'base64'
 );
 
-async function loadImageFromSupabase(
-  serverClient: SupabaseClient,
-  bucket: string,
-  path: string
-) {
-  const { data: blob, error } = await serverClient.storage
-    .from(bucket)
-    .download(path);
+async function loadImageFromSupabase(serverClient: SupabaseClient, bucket: string, path: string) {
+  const { data: blob, error } = await serverClient.storage.from(bucket).download(path);
 
   const errInfo = JSON.stringify({
     bucket,
@@ -22,11 +16,11 @@ async function loadImageFromSupabase(
   });
 
   if (error) {
-    throw new Error("Image not found > " + errInfo);
+    throw new Error('Image not found > ' + errInfo);
   }
 
   if (!blob) {
-    throw new Error("Blob was not retrieved > " + errInfo);
+    throw new Error('Blob was not retrieved > ' + errInfo);
   }
 
   return blob;
@@ -35,19 +29,19 @@ async function loadImageFromSupabase(
 function deriveImageTypeFromPath(path: string) {
   const lPath = path.toLowerCase();
   let ext =
-    lPath.endsWith(".jpeg") || lPath.endsWith(".jpg")
-      ? "jpg"
-      : lPath.endsWith(".gif")
-      ? "gif"
-      : lPath.endsWith(".png")
-      ? "png"
-      : lPath.endsWith(".heic")
-      ? "heic"
-      : lPath.endsWith(".tiff")
-      ? "tiff"
-      : lPath.endsWith(".webp")
-      ? "webp"
-      : "unknown";
+    lPath.endsWith('.jpeg') || lPath.endsWith('.jpg')
+      ? 'jpg'
+      : lPath.endsWith('.gif')
+      ? 'gif'
+      : lPath.endsWith('.png')
+      ? 'png'
+      : lPath.endsWith('.heic')
+      ? 'heic'
+      : lPath.endsWith('.tiff')
+      ? 'tiff'
+      : lPath.endsWith('.webp')
+      ? 'webp'
+      : 'unknown';
 
   return ext;
 }
@@ -98,15 +92,11 @@ async function getStreamableImage(
 
   const imageType = deriveImageTypeFromPath(imageData.path);
 
-  if (imageType === "unknown") {
-    throw new Error("Unknown image type: " + imageData.path);
+  if (imageType === 'unknown') {
+    throw new Error('Unknown image type: ' + imageData.path);
   }
 
-  const blob = await loadImageFromSupabase(
-    supabaseClient,
-    imageData.bucket,
-    imageData.path
-  );
+  const blob = await loadImageFromSupabase(supabaseClient, imageData.bucket, imageData.path);
 
   // now processing with sharp
   const buffer = Buffer.from(await blob.arrayBuffer());
@@ -114,28 +104,20 @@ async function getStreamableImage(
   const imageMeta = await parseImage.metadata();
 
   if (!imageMeta.width) {
-    throw new Error("Not possible to retrieve image width");
+    throw new Error('Not possible to retrieve image width');
   }
 
   streamable = parseImage;
 
   if (buffer.byteLength > maxSizeBytes || imageMeta.width > maxSizeWidth) {
     // we need to resize:
-    const downscaleFactorBytesEstimated = Math.min(
-      1,
-      maxSizeBytes / buffer.byteLength
-    );
+    const downscaleFactorBytesEstimated = Math.min(1, maxSizeBytes / buffer.byteLength);
 
-    const downScaleFactorWidthEstimated = Math.min(
-      1,
-      maxSizeWidth / imageMeta.width
-    );
+    const downScaleFactorWidthEstimated = Math.min(1, maxSizeWidth / imageMeta.width);
 
-    const factor = Math.min(
-      downScaleFactorWidthEstimated,
-      downscaleFactorBytesEstimated
-    );
+    const factor = Math.min(downScaleFactorWidthEstimated, downscaleFactorBytesEstimated);
 
+    // automatically rotate by exif orientation before metadata is lost by resizing
     streamable = streamable.rotate().resize(Math.round(imageMeta.width * factor));
   }
 
@@ -166,47 +148,43 @@ export async function loadImageSafely(
 
   try {
     if (!imageData.bucket || !imageData.path) {
-      throw new Error("Invalid image data");
+      throw new Error('Invalid image data');
     }
 
-    const streamable = await getStreamableImage(
-      supabaseClient,
-      imageData,
-      options
-    );
+    const streamable = await getStreamableImage(supabaseClient, imageData, options);
 
     apiRes.writeHead(200, {
-      "Content-Type": "image/jpg",
+      'Content-Type': 'image/jpg',
       // 'Content-Length': blob.size,
-      "Cache-control": "max-age=" + options.standardCacheTime,
+      'Cache-control': 'max-age=' + options.standardCacheTime,
     });
 
     return await new Promise<void>((resolve) => {
       // const readStream = blob.stream();
       streamable.pipe(apiRes);
       // readStream.pipe(resized.);
-      streamable.on("end", resolve);
+      streamable.on('end', resolve);
     });
   } catch (e) {
     onError?.(e);
 
-    const errStr = e + "";
+    const errStr = e + '';
     let errCode = 500;
-    let errMessage = "Internal server error";
+    let errMessage = 'Internal server error';
 
-    if (errStr.includes("Image not found")) {
+    if (errStr.includes('Image not found')) {
       errCode = 404;
-      errMessage = "Image not found";
+      errMessage = 'Image not found';
     }
 
     if (useTransparentImageFallback) {
       apiRes.writeHead(errCode, {
-        "Content-Type": "image/gif",
-        "Content-Length": TRANSPARENT_IMAGE_GIF_BYTES.byteLength,
-        "Cache-control": "no-cache",
+        'Content-Type': 'image/gif',
+        'Content-Length': TRANSPARENT_IMAGE_GIF_BYTES.byteLength,
+        'Cache-control': 'no-cache',
       });
 
-      apiRes.end(TRANSPARENT_IMAGE_GIF_BYTES, "binary");
+      apiRes.end(TRANSPARENT_IMAGE_GIF_BYTES, 'binary');
     } else {
       apiRes.status(errCode).send(errMessage);
     }
